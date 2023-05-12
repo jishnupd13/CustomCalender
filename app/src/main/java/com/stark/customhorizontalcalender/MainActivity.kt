@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.apply {
 
+            //calenderViewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
             calenderViewPager.adapter = calenderViewPagerAdapter
 
 
