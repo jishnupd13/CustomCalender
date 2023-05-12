@@ -15,6 +15,9 @@ import com.stark.customhorizontalcalender.model.NumberModel
 import com.stark.customhorizontalcalender.utlis.DELAY
 import com.stark.customhorizontalcalender.utlis.DELAY_CLICK_ACTION
 import com.stark.customhorizontalcalender.utlis.click
+import com.stark.customhorizontalcalender.utlis.hide
+import com.stark.customhorizontalcalender.utlis.invisible
+import com.stark.customhorizontalcalender.utlis.show
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -41,6 +44,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setInfiniteViewPager()
         currentSelectedDate = CurrentDateInstance.currentDateInstance
+        binding.imageArrowRight.invisible()
+        binding.imgArrowLeft.show()
     }
 
 
@@ -58,10 +63,13 @@ class MainActivity : AppCompatActivity() {
         binding.apply {
 
             calenderViewPager.adapter = calenderViewPagerAdapter
-            currentItemPosition = Int.MAX_VALUE / 2 - Math.ceil(list.size.toDouble() / 2).toInt()
-            calenderViewPager.setCurrentItem(currentItemPosition, false)
 
-            calenderViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
+
+
+           /* currentItemPosition = Int.MAX_VALUE / 2 - Math.ceil(list.size.toDouble() / 2).toInt()
+            calenderViewPager.setCurrentItem(currentItemPosition, false)*/
+
+          /*  calenderViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
                 @SuppressLint("NotifyDataSetChanged", "SimpleDateFormat")
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
@@ -169,7 +177,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
-            })
+            })*/
 
             imageArrowRight.click {
                 val currentViewPagerPosition = calenderViewPager.currentItem
@@ -196,13 +204,52 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+
+        binding.calenderViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+
+
+
+
+                binding.apply {
+                    if(position ==0){
+                        imgArrowLeft.invisible()
+                        imageArrowRight.show()
+                        lifecycleScope.launch {
+                            delay(DELAY)
+                            calenderViewPagerAdapter.notifyItemChanged(position+1)
+                        }
+                    }else if(position == list.size-1){
+                        imgArrowLeft.show()
+                        imageArrowRight.invisible()
+                        lifecycleScope.launch {
+                            delay(DELAY)
+                            calenderViewPagerAdapter.notifyItemChanged(position-1)
+                        }
+                    }else{
+                        imgArrowLeft.show()
+                        imageArrowRight.show()
+
+                        lifecycleScope.launch {
+                            delay(DELAY)
+                            calenderViewPagerAdapter.notifyItemChanged(position+1)
+                            calenderViewPagerAdapter.notifyItemChanged(position-1)
+                        }
+
+                    }
+                }
+            }
+        })
+
     }
 
     @SuppressLint("SimpleDateFormat")
     private fun setInitialSetup(){
         val format = SimpleDateFormat("MMM")
 
-        val c = Calendar.getInstance()
+       /* val c = Calendar.getInstance()
         val year = c[Calendar.YEAR]
         val month = c[Calendar.MONTH]+1
 
@@ -218,7 +265,21 @@ class MainActivity : AppCompatActivity() {
 
         list.add(NumberModel(id = 1,printDatesInMonth(pYear,pMonth), year = pYear, month = format.format(pC.time),pMonth))
         list.add(NumberModel(id = 2,printDatesInMonth(year,month), year = year, month = format.format(c.time),month))
-        list.add(NumberModel(id = 3,printDatesInMonth(nYear,nMonth), year = nYear, month = format.format(nC.time),nMonth))
+        list.add(NumberModel(id = 3,printDatesInMonth(nYear,nMonth), year = nYear, month = format.format(nC.time),nMonth))*/
+
+
+         val c = Calendar.getInstance()
+         val year = c[Calendar.YEAR]
+          val month = c[Calendar.MONTH]+1
+          list.add(NumberModel(id = 0,printDatesInMonth(year,month), year = year, month = format.format(c.time),month))
+
+        for (i in 0..2) {
+            c.add(Calendar.MONTH,1)
+            val year = c[Calendar.YEAR]
+            val month = c[Calendar.MONTH]+1
+            list.add(NumberModel(id = 0,printDatesInMonth(year,month), year = year, month = format.format(c.time),month))
+
+        }
     }
 
 

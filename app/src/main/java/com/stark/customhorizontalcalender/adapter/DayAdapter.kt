@@ -27,10 +27,12 @@ class DayAdapter(
     var previousSelectedPosition = -1
 
     init {
-        Log.e("check","hello world")
         list.map {
-            if (compareDates(it.day))
+            Log.e("compare","<<< ${compareDates(it.day)}")
+            if (compareDates(it.day)){
                 previousSelectedPosition = list.indexOf(it)
+                it.isDaySelected = true
+            }
             else
                 it.isDaySelected = false
         }
@@ -52,6 +54,7 @@ class DayAdapter(
                     item.isDaySelected = false
                     notifyItemChanged(position)
                     previousSelectedPosition = -1
+                    CurrentDateInstance.currentDateInstance  = null
                     currentSelectedData.invoke(null)
                 }else{
                     if(previousSelectedPosition != -1){
@@ -61,6 +64,7 @@ class DayAdapter(
                     item.isDaySelected = true
                     notifyItemChanged(position)
                     previousSelectedPosition = position
+                    CurrentDateInstance.currentDateInstance = item.day
                     currentSelectedData.invoke(item.day)
                 }
             }

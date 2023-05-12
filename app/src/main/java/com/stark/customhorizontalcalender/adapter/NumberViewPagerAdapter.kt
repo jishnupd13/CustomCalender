@@ -1,12 +1,16 @@
 package com.stark.customhorizontalcalender.adapter
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.stark.customhorizontalcalender.databinding.CellViewPagerBinding
+import com.stark.customhorizontalcalender.model.CurrentDateInstance
 import com.stark.customhorizontalcalender.model.NumberModel
+import java.lang.Exception
+import java.text.SimpleDateFormat
 import java.util.Date
 
 class NumberViewPagerAdapter(
@@ -20,6 +24,7 @@ class NumberViewPagerAdapter(
         fun  onBind(item:NumberModel) = binding.apply {
             val dayAdapter = DayAdapter(item.dateList, currentSelectedData = currentSelectedData)
             recyclerviewCalender.adapter = dayAdapter
+
             textDayInfo.text = "${item.year} ${item.month}"
             onDateChangeListener(item.year.toString(),item.month)
         }
@@ -32,10 +37,20 @@ class NumberViewPagerAdapter(
     }
 
     override fun getItemCount(): Int {
-        return Int.MAX_VALUE
+        return list.size
     }
 
     override fun onBindViewHolder(holder: NumberViewHolder, position: Int) {
-       holder.onBind(list[position % list.size])
+       holder.onBind(list[position])
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private fun compareDates(date: Date):Boolean{
+        return try {
+            val fmt = SimpleDateFormat("yyyyMMdd")
+            fmt.format(date) == CurrentDateInstance.currentDateInstance?.let { fmt.format(it) }
+        }catch (e: Exception){
+            false
+        }
     }
 }
