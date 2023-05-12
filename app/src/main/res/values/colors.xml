@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="red">#A60404</color>
+    <color name="green">#0C530C</color>
+    <color name="orange">#D84315</color>
+    <color name="darkBlue">#283593</color>
+    <color name="darkGreen">#00695C</color>
+    <color name="colorGrey">#C5C5C5</color>
+
+    <color name="gray">#606060</color>
+    <color name="appBackgroundColor">#171717</color>
+    <color name="colorLightGray">#F3F3F3</color>
+    <color name="colorGold">#FF9B29</color>
+    <color name="colorAccent">#891538</color>
+    <color name="colorLightGrey">#D9D9D9</color>
+    <color name="colorCalenderDate">#0A0A0A</color>
+    <color name="colorCalenderSelectionBackground">#0D42611A</color>
+
+    <color name="colorSelectedCardColor">#0D4261</color>
+    <color name="colorWhiteOpacity70">#B3FFFFFF</color>
+    <color name="colorUnselectedCardColor">#0D4261</color>
+
+</resources>
