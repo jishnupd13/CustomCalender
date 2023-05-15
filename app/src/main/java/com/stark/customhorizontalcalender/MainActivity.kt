@@ -3,6 +3,7 @@ package com.stark.customhorizontalcalender
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
+import android.widget.AbsListView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -138,27 +139,32 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        binding.calenderRecyclerview.addScrollListener { position->
-            Log.e("position","<<<< $position")
 
-            lifecycleScope.launch(Dispatchers.Main) {
-                setCalender(position)
-            }
+        binding.calenderRecyclerview.onScrollDoneGetPosition() { position ->
+            setCalender(position)
         }
+
     }
 
-    private fun RecyclerView.addScrollListener(onScroll: (position: Int) -> Unit) {
-        var lastPosition = 0
-        addOnScrollListener(object : RecyclerView.OnScrollListener() {
+   fun RecyclerView.onScrollDoneGetPosition(onScrollUpdate: (Int) -> Unit) {
+        this.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if (layoutManager is LinearLayoutManager) {
-                    val currentVisibleItemPosition =
-                        (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+            }
 
-                    if (lastPosition != currentVisibleItemPosition && currentVisibleItemPosition != RecyclerView.NO_POSITION) {
-                        onScroll.invoke(currentVisibleItemPosition)
-                        lastPosition = currentVisibleItemPosition
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                when (newState) {
+                    AbsListView.OnScrollListener.SCROLL_STATE_FLING -> {
+                    }
+                    AbsListView.OnScrollListener.SCROLL_STATE_IDLE -> {
+                        print("When User Done it's Scroll")
+                        val currentPosition =
+                            (this@onScrollDoneGetPosition.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                        onScrollUpdate.invoke(currentPosition)
+                    }
+                    AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL -> {
                     }
                 }
             }
