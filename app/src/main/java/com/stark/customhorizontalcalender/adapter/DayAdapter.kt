@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.stark.customhorizontalcalender.R
@@ -16,6 +17,7 @@ import com.stark.customhorizontalcalender.model.DayViewType
 import com.stark.customhorizontalcalender.utlis.click
 import java.lang.Exception
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import kotlin.IllegalArgumentException
 
@@ -24,6 +26,7 @@ class DayAdapter(
     val currentSelectedData:(day:Date?,selectionStatus:Boolean)->Unit
 ) : Adapter<ViewHolder>() {
 
+    val todayDate = Calendar.getInstance().time
 
     init {
         list.map {
@@ -41,10 +44,18 @@ class DayAdapter(
         fun onBind(item:DayModel,position: Int) = binding.apply {
             textDay.text = toSimpleString(item.day)
 
+            if(compareDateWithToday(item.day) || item.day.after(todayDate)){
+                textDay.setTextColor(ContextCompat.getColor(textDay.context,R.color.black))
+            }else{
+                textDay.setTextColor(ContextCompat.getColor(textDay.context,R.color.colorCalenderUnSelected))
+            }
+
+
             if(item.isDaySelected)
                 root.setBackgroundResource(R.drawable.bg_gray_circle)
             else
                 root.setBackgroundResource(0)
+
 
             root.click {
                 if(item.isDaySelected) {
@@ -147,6 +158,17 @@ class DayAdapter(
         return try {
             val fmt = SimpleDateFormat("yyyyMMdd")
             fmt.format(date) == CurrentDateInstance.rangeMaxDate?.let { fmt.format(it) }
+        }catch (e: Exception){
+            false
+        }
+    }
+
+
+    @SuppressLint("SimpleDateFormat")
+    private fun compareDateWithToday(date: Date):Boolean{
+        return try {
+            val fmt = SimpleDateFormat("yyyyMMdd")
+            fmt.format(date) == todayDate?.let { fmt.format(it) }
         }catch (e: Exception){
             false
         }

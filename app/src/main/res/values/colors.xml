@@ -27,4 +27,6 @@
     <color name="colorWhiteOpacity70">#B3FFFFFF</color>
     <color name="colorUnselectedCardColor">#0D4261</color>
 
+    <color name="colorCalenderUnSelected">#A5A5A5</color>
+
 </resources>
