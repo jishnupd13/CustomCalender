@@ -332,17 +332,18 @@ class MainActivity : AppCompatActivity() {
         val daysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH)
 
         val offset = fetchFirstDayName(cal.time)
-        //  Log.e("offset","<<< $offset")
+        cal.add(Calendar.DAY_OF_MONTH, -offset)
         for (i in 0 until offset){
-            dayList.add(DayModel(dayViewType = DayViewType.BUFFER))
+            dayList.add(DayModel(day = cal.time, dayViewType = DayViewType.DATE, isDaySelected = compareDates(cal.time)))
+            //dayList.add(DayModel(dayViewType = DayViewType.BUFFER))
+            cal.add(Calendar.DAY_OF_MONTH, 1)
         }
-
         for (i in 0 until daysInMonth) {
-            //  Log.e("time","${fmt.format(cal.time)}")
-          //  Log.e("dateCompare","${fmt.format(cal.time)}  ${currentSelectedDate?.compareTo(cal.time)}")
             dayList.add(DayModel(day = cal.time, dayViewType = DayViewType.DATE, isDaySelected = compareDates(cal.time)))
             cal.add(Calendar.DAY_OF_MONTH, 1)
         }
+
+
         return dayList
     }
 
