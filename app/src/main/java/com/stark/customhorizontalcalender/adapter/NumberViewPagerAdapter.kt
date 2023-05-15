@@ -38,7 +38,5 @@ class NumberViewPagerAdapter(
 
     override fun onBindViewHolder(holder: NumberViewHolder, position: Int) {
        holder.onBind(list[position % list.size])
-      // onPositionChangeListener.invoke(position)
-       //Log.e("position","<<<< $position")
     }
 }
