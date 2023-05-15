@@ -54,29 +54,50 @@ class MainActivity : AppCompatActivity() {
         setInitialSetup()
         calenderViewPagerAdapter = NumberViewPagerAdapter(list, onDateChangeListener = { year, month ->
 
-        }, currentSelectedData = {
-            currentSelectedDate = it
-            CurrentDateInstance.currentDateInstance = it
+        }, currentSelectedData = {day, selectionStatus ->
 
-            val currentPosition = realPosition % list.size
-            if (currentPosition==0){
-                list[1].dateList.map { it.isDaySelected = false }
-                list[2].dateList.map { it.isDaySelected = false }
+           /* if(selectionStatus){
+                currentSelectedDate = day
+                if(day != null){
+                    if(CurrentDateInstance.currentDateInstance!=null){
+                        CurrentDateInstance.rangeMaxDate = day
+                    }else{
+                        CurrentDateInstance.currentDateInstance = day
+                    }
 
-                calenderViewPagerAdapter.notifyItemChanged(realPosition-1)
-                calenderViewPagerAdapter.notifyItemChanged(realPosition+1)
-            }else if(currentPosition == 1){
-                list[0].dateList.map { it.isDaySelected= false }
-                list[2].dateList.map { it.isDaySelected = false }
-                calenderViewPagerAdapter.notifyItemChanged(realPosition-1)
-                calenderViewPagerAdapter.notifyItemChanged(realPosition+1)
-            }else if(currentPosition==2){
-                list[1].dateList.map { it.isDaySelected = false }
-                list[2].dateList.map { it.isDaySelected = false }
-                calenderViewPagerAdapter.notifyItemChanged(realPosition-1)
-                calenderViewPagerAdapter.notifyItemChanged(realPosition+1)
+                    calenderViewPagerAdapter.notifyItemChanged(realPosition)
+                }
+            }else{
+                if(compareDates(day!!)){
+                    CurrentDateInstance.currentDateInstance = null
+                    CurrentDateInstance.rangeMaxDate = null
+                }
+                calenderViewPagerAdapter.notifyItemChanged(realPosition)
+            }*/
+
+            if(selectionStatus){
+                if(CurrentDateInstance.currentDateInstance != null && CurrentDateInstance.rangeMaxDate != null){
+                    CurrentDateInstance.currentDateInstance = day
+                    CurrentDateInstance.rangeMaxDate = null
+                    calenderViewPagerAdapter.notifyItemChanged(realPosition)
+                }else if(CurrentDateInstance.currentDateInstance ==null && CurrentDateInstance.rangeMaxDate == null){
+                    CurrentDateInstance.currentDateInstance = day
+                    CurrentDateInstance.rangeMaxDate = null
+                    calenderViewPagerAdapter.notifyItemChanged(realPosition)
+                }else if(CurrentDateInstance.currentDateInstance != null && CurrentDateInstance.rangeMaxDate==null){
+                    CurrentDateInstance.rangeMaxDate = day
+                    calenderViewPagerAdapter.notifyItemChanged(realPosition)
+                }
+            }else{
+                /**
+                 * User unselect the date
+                 * */
+                if(CurrentDateInstance.currentDateInstance != null && CurrentDateInstance.rangeMaxDate != null){
+                    CurrentDateInstance.currentDateInstance = day
+                    CurrentDateInstance.rangeMaxDate = null
+                    calenderViewPagerAdapter.notifyItemChanged(realPosition)
+                }
             }
-
         })
 
         binding.apply {

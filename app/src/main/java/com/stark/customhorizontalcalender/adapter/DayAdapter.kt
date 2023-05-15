@@ -21,19 +21,18 @@ import kotlin.IllegalArgumentException
 
 class DayAdapter(
     val list:ArrayList<DayModel>,
-    val currentSelectedData:(day:Date?)->Unit
+    val currentSelectedData:(day:Date?,selectionStatus:Boolean)->Unit
 ) : Adapter<ViewHolder>() {
 
-    var previousSelectedPosition = -1
 
     init {
         list.map {
             if (compareDates(it.day)){
-                previousSelectedPosition = list.indexOf(it)
                 it.isDaySelected = true
-            }
-            else
-                it.isDaySelected = false
+            } else if(compareRangeDates(it.day)){
+                it.isDaySelected = true
+            }else
+                it.isDaySelected = compareWithInRange(it.day)
         }
     }
 
@@ -47,22 +46,15 @@ class DayAdapter(
             else
                 root.setBackgroundResource(0)
 
-
             root.click {
                 if(item.isDaySelected) {
                     item.isDaySelected = false
                     notifyItemChanged(position)
-                    previousSelectedPosition = -1
-                    currentSelectedData.invoke(null)
+                    currentSelectedData.invoke(item.day,false)
                 }else{
-                    if(previousSelectedPosition != -1){
-                        list[previousSelectedPosition].isDaySelected = false
-                        notifyItemChanged(previousSelectedPosition)
-                    }
                     item.isDaySelected = true
                     notifyItemChanged(position)
-                    previousSelectedPosition = position
-                    currentSelectedData.invoke(item.day)
+                    currentSelectedData.invoke(item.day,true)
                 }
             }
         }
@@ -134,4 +126,36 @@ class DayAdapter(
             false
         }
     }
+
+     /**
+      *  To Compare the dates
+      *  Status 0 is equal
+      *  1 is greater
+      *  -1 is lesser
+      * */
+    private fun checkAndCompareDates(date1: Date,date2: Date):Int{
+        return if(date1 == date2)
+            0
+        else if(date1.after(date2))
+            -1
+        else
+            1
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private fun compareRangeDates(date: Date):Boolean{
+        return try {
+            val fmt = SimpleDateFormat("yyyyMMdd")
+            fmt.format(date) == CurrentDateInstance.rangeMaxDate?.let { fmt.format(it) }
+        }catch (e: Exception){
+            false
+        }
+    }
+
+    private fun compareWithInRange(date: Date):Boolean{
+        return if(CurrentDateInstance.currentDateInstance!=null && CurrentDateInstance.rangeMaxDate != null){
+            date.after(CurrentDateInstance.currentDateInstance) && date.before(CurrentDateInstance.rangeMaxDate)
+        }else false
+    }
+
 }
