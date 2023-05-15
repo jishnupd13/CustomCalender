@@ -384,6 +384,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         CurrentDateInstance.currentDateInstance = null
+        CurrentDateInstance.rangeMaxDate = null
     }
 
 
