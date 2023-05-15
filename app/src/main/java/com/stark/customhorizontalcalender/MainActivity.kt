@@ -3,7 +3,6 @@ package com.stark.customhorizontalcalender
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
-import android.widget.AbsListView.OnScrollListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -54,135 +53,41 @@ class MainActivity : AppCompatActivity() {
 
         setInitialSetup()
         calenderViewPagerAdapter = NumberViewPagerAdapter(list, onDateChangeListener = { year, month ->
-            lifecycleScope.launch(Dispatchers.Main) {
 
-            }
         }, currentSelectedData = {
             currentSelectedDate = it
             CurrentDateInstance.currentDateInstance = it
-        },
-        onPositionChangeListener = { position->
 
+            val currentPosition = realPosition % list.size
+            if (currentPosition==0){
+                list[1].dateList.map { it.isDaySelected = false }
+                list[2].dateList.map { it.isDaySelected = false }
 
-            currentItemPosition = position % list.size
-
-            Log.e("currentItemPosition","<<<<<< $currentItemPosition")
-
-            val format = SimpleDateFormat("MMM")
-            val currentMonth = list[currentItemPosition].monthInInteger
-            val currentYear = list[currentItemPosition].year
-
-            val c = Calendar.getInstance()
-            c.set(Calendar.MONTH,fetchCalenderMonth(currentMonth))
-            c.set(Calendar.YEAR,currentYear)
-            val year = c[Calendar.YEAR]
-            val month = c[Calendar.MONTH]+1
-
-            val pC = Calendar.getInstance()
-            pC.set(Calendar.MONTH,fetchCalenderMonth(currentMonth))
-            pC.set(Calendar.YEAR,currentYear)
-            pC.add(Calendar.MONTH, -1)
-            val pYear = pC[Calendar.YEAR]
-            val pMonth = pC[Calendar.MONTH]+1
-
-            val nC = Calendar.getInstance()
-            nC.set(Calendar.MONTH,fetchCalenderMonth(currentMonth))
-            nC.set(Calendar.YEAR,currentYear)
-            nC.add(Calendar.MONTH,1)
-            val nYear = nC[Calendar.YEAR]
-            val nMonth = nC[Calendar.MONTH]+1
-
-            when (currentItemPosition) {
-
-                0 -> {
-
-                    list[2].dateList = printDatesInMonth(pYear,pMonth)
-                    list[2].year = pYear
-                    list[2].month = format.format(pC.time)
-                    list[2].monthInInteger = pMonth
-
-                    list[0].dateList =  printDatesInMonth(year,month)
-                    list[0].year = year
-                    list[0].month = format.format(c.time)
-                    list[0].monthInInteger = month
-
-                    list[1].dateList =  printDatesInMonth(nYear,nMonth)
-                    list[1].year = nYear
-                    list[1].month = format.format(nC.time)
-                    list[1].monthInInteger = nMonth
-
-                    lifecycleScope.launch {
-                        delay(DELAY)
-                        calenderViewPagerAdapter.notifyItemChanged(position-1)
-                        calenderViewPagerAdapter.notifyItemChanged(position+1)
-                    }
-
-                }
-
-                1 -> {
-
-                    list[0].dateList =  printDatesInMonth(pYear,pMonth)
-                    list[0].year = pYear
-                    list[0].month = format.format(pC.time)
-                    list[0].monthInInteger = pMonth
-
-                    list[1].dateList =  printDatesInMonth(year,month)
-                    list[1].year = year
-                    list[1].month = format.format(c.time)
-                    list[1].monthInInteger = month
-
-                    list[2].dateList = printDatesInMonth(nYear,nMonth)
-                    list[2].year = nYear
-                    list[2].month = format.format(nC.time)
-                    list[2].monthInInteger = nMonth
-
-                    lifecycleScope.launch {
-                        delay(DELAY)
-                        calenderViewPagerAdapter.notifyItemChanged(position-1)
-                        calenderViewPagerAdapter.notifyItemChanged(position+1)
-                    }
-                }
-
-
-                2 -> {
-                    list[1].dateList =  printDatesInMonth(pYear,pMonth)
-                    list[1].year = pYear
-                    list[1].month = format.format(pC.time)
-                    list[1].monthInInteger = pMonth
-
-                    list[2].dateList = printDatesInMonth(year,month)
-                    list[2].year = year
-                    list[2].month = format.format(c.time)
-                    list[2].monthInInteger = month
-
-                    list[0].dateList =  printDatesInMonth(nYear,nMonth)
-                    list[0].year = nYear
-                    list[0].month = format.format(nC.time)
-                    list[0].monthInInteger = nMonth
-
-                    lifecycleScope.launch {
-                        delay(DELAY)
-                        calenderViewPagerAdapter.notifyItemChanged(position-1)
-                        calenderViewPagerAdapter.notifyItemChanged(position+1)
-                    }
-                }
+                calenderViewPagerAdapter.notifyItemChanged(realPosition-1)
+                calenderViewPagerAdapter.notifyItemChanged(realPosition+1)
+            }else if(currentPosition == 1){
+                list[0].dateList.map { it.isDaySelected= false }
+                list[2].dateList.map { it.isDaySelected = false }
+                calenderViewPagerAdapter.notifyItemChanged(realPosition-1)
+                calenderViewPagerAdapter.notifyItemChanged(realPosition+1)
+            }else if(currentPosition==2){
+                list[1].dateList.map { it.isDaySelected = false }
+                list[2].dateList.map { it.isDaySelected = false }
+                calenderViewPagerAdapter.notifyItemChanged(realPosition-1)
+                calenderViewPagerAdapter.notifyItemChanged(realPosition+1)
             }
+
         })
 
         binding.apply {
 
             calenderRecyclerview.adapter = calenderViewPagerAdapter
             currentItemPosition = Int.MAX_VALUE / 2 - Math.ceil(list.size.toDouble() / 2).toInt()
-           // calenderViewPager.setCurrentItem(currentItemPosition, false)
-
             calenderRecyclerview.layoutManager?.scrollToPosition(currentItemPosition)
 
             //For tight scrolling
             val snapHelper: SnapHelper = PagerSnapHelper()
             snapHelper.attachToRecyclerView(calenderRecyclerview)
-
-
-
 
             imageArrowRight.click {
                 lifecycleScope.launch(Dispatchers.Main){
@@ -214,116 +119,118 @@ class MainActivity : AppCompatActivity() {
 
         binding.calenderRecyclerview.addScrollListener{ position ->
 
-            currentItemPosition = position % list.size
-            realPosition = position
-            val format = SimpleDateFormat("MMM")
+            lifecycleScope.launch(Dispatchers.IO){
+
+                Log.e("positionIndex","<<< positionIndex $position")
+
+                currentItemPosition = position % list.size
+                realPosition = position
+                val format = SimpleDateFormat("MMM")
 
 
-            val currentMonth = list[currentItemPosition].monthInInteger
-            val currentYear = list[currentItemPosition].year
+                val currentMonth = list[currentItemPosition].monthInInteger
+                val currentYear = list[currentItemPosition].year
 
-            val c = Calendar.getInstance()
-            c.set(Calendar.MONTH,fetchCalenderMonth(currentMonth))
-            c.set(Calendar.YEAR,currentYear)
-            val year = c[Calendar.YEAR]
-            val month = c[Calendar.MONTH]+1
+                val c = Calendar.getInstance()
+                c.set(Calendar.MONTH,fetchCalenderMonth(currentMonth))
+                c.set(Calendar.YEAR,currentYear)
+                val year = c[Calendar.YEAR]
+                val month = c[Calendar.MONTH]+1
 
-            val pC = Calendar.getInstance()
-            pC.set(Calendar.MONTH,fetchCalenderMonth(currentMonth))
-            pC.set(Calendar.YEAR,currentYear)
-            pC.add(Calendar.MONTH, -1)
-            val pYear = pC[Calendar.YEAR]
-            val pMonth = pC[Calendar.MONTH]+1
+                val pC = Calendar.getInstance()
+                pC.set(Calendar.MONTH,fetchCalenderMonth(currentMonth))
+                pC.set(Calendar.YEAR,currentYear)
+                pC.add(Calendar.MONTH, -1)
+                val pYear = pC[Calendar.YEAR]
+                val pMonth = pC[Calendar.MONTH]+1
 
-            val nC = Calendar.getInstance()
-            nC.set(Calendar.MONTH,fetchCalenderMonth(currentMonth))
-            nC.set(Calendar.YEAR,currentYear)
-            nC.add(Calendar.MONTH,1)
-            val nYear = nC[Calendar.YEAR]
-            val nMonth = nC[Calendar.MONTH]+1
+                val nC = Calendar.getInstance()
+                nC.set(Calendar.MONTH,fetchCalenderMonth(currentMonth))
+                nC.set(Calendar.YEAR,currentYear)
+                nC.add(Calendar.MONTH,1)
+                val nYear = nC[Calendar.YEAR]
+                val nMonth = nC[Calendar.MONTH]+1
 
-            when (currentItemPosition) {
+                when (currentItemPosition) {
 
-                0 -> {
+                    0 -> {
 
-                    list[2].dateList = printDatesInMonth(pYear,pMonth)
-                    list[2].year = pYear
-                    list[2].month = format.format(pC.time)
-                    list[2].monthInInteger = pMonth
+                        list[2].dateList = printDatesInMonth(pYear,pMonth)
+                        list[2].year = pYear
+                        list[2].month = format.format(pC.time)
+                        list[2].monthInInteger = pMonth
 
-                    list[0].dateList =  printDatesInMonth(year,month)
-                    list[0].year = year
-                    list[0].month = format.format(c.time)
-                    list[0].monthInInteger = month
+                        list[0].dateList =  printDatesInMonth(year,month)
+                        list[0].year = year
+                        list[0].month = format.format(c.time)
+                        list[0].monthInInteger = month
 
-                    list[1].dateList =  printDatesInMonth(nYear,nMonth)
-                    list[1].year = nYear
-                    list[1].month = format.format(nC.time)
-                    list[1].monthInInteger = nMonth
+                        list[1].dateList =  printDatesInMonth(nYear,nMonth)
+                        list[1].year = nYear
+                        list[1].month = format.format(nC.time)
+                        list[1].monthInInteger = nMonth
 
-                    lifecycleScope.launch {
-                        delay(DELAY)
-                        //calenderViewPagerAdapter.notifyDataSetChanged()
-                        calenderViewPagerAdapter.notifyItemChanged(position-1)
-                        calenderViewPagerAdapter.notifyItemChanged(position+1)
+                        lifecycleScope.launch {
+                            delay(DELAY)
+                            calenderViewPagerAdapter.notifyItemChanged(position-1)
+                            calenderViewPagerAdapter.notifyItemChanged(position+1)
+                        }
+
                     }
 
-                }
 
+                    1 -> {
 
-                1 -> {
+                        list[0].dateList =  printDatesInMonth(pYear,pMonth)
+                        list[0].year = pYear
+                        list[0].month = format.format(pC.time)
+                        list[0].monthInInteger = pMonth
 
-                    list[0].dateList =  printDatesInMonth(pYear,pMonth)
-                    list[0].year = pYear
-                    list[0].month = format.format(pC.time)
-                    list[0].monthInInteger = pMonth
+                        list[1].dateList =  printDatesInMonth(year,month)
+                        list[1].year = year
+                        list[1].month = format.format(c.time)
+                        list[1].monthInInteger = month
 
-                    list[1].dateList =  printDatesInMonth(year,month)
-                    list[1].year = year
-                    list[1].month = format.format(c.time)
-                    list[1].monthInInteger = month
+                        list[2].dateList = printDatesInMonth(nYear,nMonth)
+                        list[2].year = nYear
+                        list[2].month = format.format(nC.time)
+                        list[2].monthInInteger = nMonth
 
-                    list[2].dateList = printDatesInMonth(nYear,nMonth)
-                    list[2].year = nYear
-                    list[2].month = format.format(nC.time)
-                    list[2].monthInInteger = nMonth
-
-                    lifecycleScope.launch {
-                        delay(DELAY)
-                        //calenderViewPagerAdapter.notifyDataSetChanged()
-                        calenderViewPagerAdapter.notifyItemChanged(position-1)
-                        calenderViewPagerAdapter.notifyItemChanged(position+1)
+                        lifecycleScope.launch {
+                            delay(DELAY)
+                            calenderViewPagerAdapter.notifyItemChanged(position-1)
+                            calenderViewPagerAdapter.notifyItemChanged(position+1)
+                        }
                     }
-                }
 
-                2 -> {
-                    list[1].dateList =  printDatesInMonth(pYear,pMonth)
-                    list[1].year = pYear
-                    list[1].month = format.format(pC.time)
-                    list[1].monthInInteger = pMonth
+                    2 -> {
+                        list[1].dateList =  printDatesInMonth(pYear,pMonth)
+                        list[1].year = pYear
+                        list[1].month = format.format(pC.time)
+                        list[1].monthInInteger = pMonth
 
-                    list[2].dateList = printDatesInMonth(year,month)
-                    list[2].year = year
-                    list[2].month = format.format(c.time)
-                    list[2].monthInInteger = month
+                        list[2].dateList = printDatesInMonth(year,month)
+                        list[2].year = year
+                        list[2].month = format.format(c.time)
+                        list[2].monthInInteger = month
 
-                    list[0].dateList =  printDatesInMonth(nYear,nMonth)
-                    list[0].year = nYear
-                    list[0].month = format.format(nC.time)
-                    list[0].monthInInteger = nMonth
+                        list[0].dateList =  printDatesInMonth(nYear,nMonth)
+                        list[0].year = nYear
+                        list[0].month = format.format(nC.time)
+                        list[0].monthInInteger = nMonth
 
-                    lifecycleScope.launch {
-                        delay(DELAY)
-                        //calenderViewPagerAdapter.notifyDataSetChanged()
-                        calenderViewPagerAdapter.notifyItemChanged(position-1)
-                        calenderViewPagerAdapter.notifyItemChanged(position+1)
+                        lifecycleScope.launch {
+                            delay(DELAY)
+                            calenderViewPagerAdapter.notifyItemChanged(position-1)
+                            calenderViewPagerAdapter.notifyItemChanged(position+1)
+                        }
                     }
                 }
             }
         }
     }
 
-    fun RecyclerView.addScrollListener(onScroll: (position: Int) -> Unit) {
+    private fun RecyclerView.addScrollListener(onScroll: (position: Int) -> Unit) {
         var lastPosition = 0
         addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -394,7 +301,7 @@ class MainActivity : AppCompatActivity() {
 
         for (i in 0 until daysInMonth) {
             //  Log.e("time","${fmt.format(cal.time)}")
-            Log.e("dateCompare","${fmt.format(cal.time)}  ${currentSelectedDate?.compareTo(cal.time)}")
+          //  Log.e("dateCompare","${fmt.format(cal.time)}  ${currentSelectedDate?.compareTo(cal.time)}")
             dayList.add(DayModel(day = cal.time, dayViewType = DayViewType.DATE, isDaySelected = compareDates(cal.time)))
             cal.add(Calendar.DAY_OF_MONTH, 1)
         }

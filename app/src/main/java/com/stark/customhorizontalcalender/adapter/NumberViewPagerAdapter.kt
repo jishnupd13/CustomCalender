@@ -13,8 +13,7 @@ import java.util.Date
 class NumberViewPagerAdapter(
     val list: ArrayList<NumberModel>,
     val currentSelectedData:(day:Date?)->Unit,
-    val onDateChangeListener:(year:String,month:String)->Unit,
-    val onPositionChangeListener:(position:Int)->Unit
+    val onDateChangeListener:(year:String,month:String)->Unit
 ) : Adapter<NumberViewPagerAdapter.NumberViewHolder>() {
 
    inner class NumberViewHolder(val binding: CellViewPagerBinding):ViewHolder(binding.root){

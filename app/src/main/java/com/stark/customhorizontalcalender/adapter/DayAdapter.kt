@@ -27,16 +27,17 @@ class DayAdapter(
     var previousSelectedPosition = -1
 
     init {
-        Log.e("check","hello world")
         list.map {
-            if (compareDates(it.day))
+            if (compareDates(it.day)){
                 previousSelectedPosition = list.indexOf(it)
+                it.isDaySelected = true
+            }
             else
                 it.isDaySelected = false
         }
     }
 
-    inner class DayViewHolder(val binding: CellDaysBinding):ViewHolder(binding.root){
+    inner class DayViewHolder(private val binding: CellDaysBinding):ViewHolder(binding.root){
 
         fun onBind(item:DayModel,position: Int) = binding.apply {
             textDay.text = toSimpleString(item.day)
