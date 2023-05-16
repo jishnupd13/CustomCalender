@@ -15,7 +15,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:textColor="@color/colorCalenderUnSelected"
         android:textSize="18sp"
-        tools:text= "12"
         android:fontFamily="@font/open_sans_semi_bold"
         android:textAlignment="center"
         />

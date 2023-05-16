@@ -59,6 +59,8 @@ class MainActivity : AppCompatActivity() {
         },currentSelectedData = {day, selectionStatus ->
 
             if(selectionStatus){
+                Log.e("states true","${CurrentDateInstance.currentDateInstance} ${CurrentDateInstance.rangeMaxDate}")
+
                 if(CurrentDateInstance.currentDateInstance != null && CurrentDateInstance.rangeMaxDate != null){
                     CurrentDateInstance.currentDateInstance = day
                     CurrentDateInstance.rangeMaxDate = null
@@ -82,6 +84,7 @@ class MainActivity : AppCompatActivity() {
                 /**
                  * User unselect the date
                  * */
+                Log.e("states false","${CurrentDateInstance.currentDateInstance} ${CurrentDateInstance.rangeMaxDate}")
                 if(CurrentDateInstance.currentDateInstance != null && CurrentDateInstance.rangeMaxDate != null){
                     CurrentDateInstance.currentDateInstance = day
                     CurrentDateInstance.rangeMaxDate = null
@@ -108,6 +111,7 @@ class MainActivity : AppCompatActivity() {
 
             currentItemPosition = Int.MAX_VALUE / 2 - Math.ceil(list.size.toDouble() / 2).toInt()
             calenderRecyclerview.layoutManager?.scrollToPosition(currentItemPosition)
+            realPosition = currentItemPosition
 
 
 
@@ -334,7 +338,7 @@ class MainActivity : AppCompatActivity() {
         val offset = fetchFirstDayName(cal.time)
         cal.add(Calendar.DAY_OF_MONTH, -offset)
         for (i in 0 until offset){
-            dayList.add(DayModel(day = cal.time, dayViewType = DayViewType.BUFFER, isDaySelected = compareDates(cal.time)))
+            dayList.add(DayModel(day = cal.time, dayViewType = DayViewType.DATE, isDaySelected = compareDates(cal.time), isDayBuffer = true))
             //dayList.add(DayModel(dayViewType = DayViewType.BUFFER))
             cal.add(Calendar.DAY_OF_MONTH, 1)
         }
@@ -347,7 +351,7 @@ class MainActivity : AppCompatActivity() {
         val position = lastPositionIndex % 7
         val offsetLimit = 7 - (position+1)
         for (i in 0 until offsetLimit){
-            dayList.add(DayModel(day = cal.time, dayViewType = DayViewType.BUFFER, isDaySelected = compareDates(cal.time)))
+            dayList.add(DayModel(day = cal.time, dayViewType = DayViewType.DATE, isDaySelected = compareDates(cal.time), isDayBuffer = true))
             cal.add(Calendar.DAY_OF_MONTH, 1)
         }
         return dayList

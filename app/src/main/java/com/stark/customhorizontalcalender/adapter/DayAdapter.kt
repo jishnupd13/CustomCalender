@@ -44,11 +44,16 @@ class DayAdapter(
         fun onBind(item:DayModel,position: Int) = binding.apply {
             textDay.text = toSimpleString(item.day)
 
-            if(compareDateWithToday(item.day) || item.day.after(todayDate)){
-                textDay.setTextColor(ContextCompat.getColor(textDay.context,R.color.black))
-            }else{
+            if(item.isDayBuffer){
                 textDay.setTextColor(ContextCompat.getColor(textDay.context,R.color.colorCalenderUnSelected))
+            }else{
+                if(compareDateWithToday(item.day) || item.day.after(todayDate)){
+                    textDay.setTextColor(ContextCompat.getColor(textDay.context,R.color.black))
+                }else{
+                    textDay.setTextColor(ContextCompat.getColor(textDay.context,R.color.colorCalenderUnSelected))
+                }
             }
+
 
 
             if(item.isDaySelected)

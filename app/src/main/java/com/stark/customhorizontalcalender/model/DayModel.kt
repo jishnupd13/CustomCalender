@@ -6,7 +6,8 @@ data class DayModel(
     val headerTitle:String = "",
     val day:Date = Date(),
     val dayViewType:DayViewType,
-    var isDaySelected:Boolean = false
+    var isDaySelected:Boolean = false,
+    var isDayBuffer:Boolean = false
 )
 
 enum class DayViewType {
