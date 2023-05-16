@@ -334,7 +334,7 @@ class MainActivity : AppCompatActivity() {
         val offset = fetchFirstDayName(cal.time)
         cal.add(Calendar.DAY_OF_MONTH, -offset)
         for (i in 0 until offset){
-            dayList.add(DayModel(day = cal.time, dayViewType = DayViewType.DATE, isDaySelected = compareDates(cal.time)))
+            dayList.add(DayModel(day = cal.time, dayViewType = DayViewType.BUFFER, isDaySelected = compareDates(cal.time)))
             //dayList.add(DayModel(dayViewType = DayViewType.BUFFER))
             cal.add(Calendar.DAY_OF_MONTH, 1)
         }
@@ -343,7 +343,13 @@ class MainActivity : AppCompatActivity() {
             cal.add(Calendar.DAY_OF_MONTH, 1)
         }
 
-
+        val lastPositionIndex = dayList.size - 1
+        val position = lastPositionIndex % 7
+        val offsetLimit = 7 - (position+1)
+        for (i in 0 until offsetLimit){
+            dayList.add(DayModel(day = cal.time, dayViewType = DayViewType.BUFFER, isDaySelected = compareDates(cal.time)))
+            cal.add(Calendar.DAY_OF_MONTH, 1)
+        }
         return dayList
     }
 

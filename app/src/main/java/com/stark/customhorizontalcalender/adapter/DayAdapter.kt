@@ -85,6 +85,12 @@ class DayAdapter(
     inner class DayBufferViewHolder(val binding: CellBufferBinding):ViewHolder(binding.root){
         fun onBind(item:DayModel) = binding.apply {
             Log.e("status","${item.dayViewType}")
+            textDay.text = toSimpleString(item.day)
+        }
+
+        @SuppressLint("SimpleDateFormat")
+        private fun toSimpleString(date: Date?) = with(date ?: Date()) {
+            SimpleDateFormat("dd").format(this)
         }
     }
 
