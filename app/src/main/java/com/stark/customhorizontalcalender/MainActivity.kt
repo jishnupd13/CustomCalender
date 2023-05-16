@@ -8,7 +8,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.SnapHelper
 import com.stark.customhorizontalcalender.adapter.NumberViewPagerAdapter
 import com.stark.customhorizontalcalender.databinding.ActivityMainBinding
 import com.stark.customhorizontalcalender.model.CurrentDateInstance
@@ -22,7 +21,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -101,12 +99,16 @@ class MainActivity : AppCompatActivity() {
         binding.apply {
 
             calenderRecyclerview.adapter = calenderViewPagerAdapter
+
+            val layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
+            val snapHelper = PagerSnapHelper()
+            calenderRecyclerview.layoutManager = layoutManager
+            snapHelper.attachToRecyclerView(calenderRecyclerview)
+
             currentItemPosition = Int.MAX_VALUE / 2 - Math.ceil(list.size.toDouble() / 2).toInt()
             calenderRecyclerview.layoutManager?.scrollToPosition(currentItemPosition)
 
-            //For tight scrolling
-            val snapHelper: SnapHelper = PagerSnapHelper()
-            snapHelper.attachToRecyclerView(calenderRecyclerview)
+
 
             imageArrowRight.click {
                 lifecycleScope.launch(Dispatchers.Main){
@@ -138,7 +140,8 @@ class MainActivity : AppCompatActivity() {
 
         binding.calenderRecyclerview.addScrollListener { position->
             Log.e("position","<<<< $position")
-            runBlocking {
+
+            lifecycleScope.launch(Dispatchers.Main) {
                 setCalender(position)
             }
         }
@@ -396,4 +399,6 @@ class MainActivity : AppCompatActivity() {
         else
             1
     }
+
+
 }
