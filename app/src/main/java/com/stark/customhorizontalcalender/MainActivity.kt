@@ -46,6 +46,12 @@ class MainActivity : AppCompatActivity() {
     private var selectDateCalenderInstance = Calendar.getInstance()
     private var endDateCalenderInstance = Calendar.getInstance()
 
+    private var startMonth = -1
+    private var startYear = -1
+
+    private var endMonth = -1
+    private var endYear = -1
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,18 +83,29 @@ class MainActivity : AppCompatActivity() {
                 MonthAndYearPickerDialogFragment{
                     binding.textStartMonth.text = "${it.first.month} ${it.second}"
 
-                    selectDateCalenderInstance.set(Calendar.YEAR, it.second)
-                    selectDateCalenderInstance.set(Calendar.MONTH, it.first.id-1)
+                    startYear = it.second
+                    startMonth = it.first.id
+
+                    Log.e("startYear","$startMonth $startYear")
+
+                    if(startYear!=-1 && startMonth!= -1 && endMonth != -1 && endYear!= -1) {
+                        setInitialSetup()
+                    }
 
                 }.show((binding.root.context as AppCompatActivity).supportFragmentManager,"Tag")
             }
 
             binding.textEndMonth.setOnClickListener {
                 MonthAndYearPickerDialogFragment{
+
+                    endYear = it.second
+                    endMonth = it.first.id
+
                     binding.textEndMonth.text = "${it.first.month} ${it.second}"
-                    endDateCalenderInstance.set(Calendar.YEAR, it.second)
-                    endDateCalenderInstance.set(Calendar.MONTH, it.first.id)
-                    setInitialSetup()
+
+                    if(startYear!=-1 && startMonth!= -1 && endMonth != -1 && endYear!= -1){
+                        setInitialSetup()
+                    }
 
                 }.show((binding.root.context as AppCompatActivity).supportFragmentManager,"Tag")
             }
@@ -152,20 +169,25 @@ class MainActivity : AppCompatActivity() {
         list.add(NumberModel(id = 2,printDatesInMonth(year,month), year = year, month = format.format(c.time),month))
         list.add(NumberModel(id = 3,printDatesInMonth(nYear,nMonth), year = nYear, month = format.format(nC.time),nMonth))*/
 
-        val endDateMonth = endDateCalenderInstance.get(Calendar.MONTH)
-        val endDateYear = endDateCalenderInstance.get(Calendar.YEAR)
+      //  val endDateMonth = endDateCalenderInstance.get(Calendar.MONTH)
+        //val endDateYear = endDateCalenderInstance.get(Calendar.YEAR)
 
-        var currentMonth = selectDateCalenderInstance.get(Calendar.MONTH)
-        var currentYear = selectDateCalenderInstance.get(Calendar.YEAR)
+        var currentMonth: Int
+        var currentYear: Int
 
-        while (selectDateCalenderInstance.time != endDateCalenderInstance.time){
-             currentMonth = selectDateCalenderInstance.get(Calendar.MONTH)
-             currentYear = selectDateCalenderInstance.get(Calendar.YEAR)
+        selectDateCalenderInstance.set(startYear, startMonth,1)
+        endDateCalenderInstance.set( endYear,endMonth,1)
+
+        list = arrayListOf()
+        while (!selectDateCalenderInstance.equals(endDateCalenderInstance)){
+            currentMonth = selectDateCalenderInstance.get(Calendar.MONTH)
+            currentYear = selectDateCalenderInstance.get(Calendar.YEAR)
             Log.e("selectedYear","$currentMonth $currentYear")
             list.add(NumberModel(id = 1,printDatesInMonth(currentYear,currentMonth), year = currentYear, month = format.format(selectDateCalenderInstance.time),currentMonth))
-            calenderViewPagerAdapter.setUpList(list)
             selectDateCalenderInstance.add(Calendar.MONTH, 1)
         }
+
+        calenderViewPagerAdapter.setUpList(list)
     }
 
 
@@ -185,7 +207,8 @@ class MainActivity : AppCompatActivity() {
         val fmt = SimpleDateFormat("dd/MM/yyyy EEE")
         val cal = Calendar.getInstance()
         cal.clear()
-        cal.set(year, month - 1, 1)
+        //cal.set(year, month - 1, 1)
+        cal.set(year, month , 1)
 
         val daysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH)
 
@@ -196,7 +219,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         for (i in 0 until daysInMonth) {
-            //  Log.e("time","${fmt.format(cal.time)}")
+              Log.e("time","${fmt.format(cal.time)}")
           //  Log.e("dateCompare","${fmt.format(cal.time)}  ${currentSelectedDate?.compareTo(cal.time)}")
             dayList.add(DayModel(day = cal.time, dayViewType = DayViewType.DATE, isDaySelected = compareDates(cal.time)))
             cal.add(Calendar.DAY_OF_MONTH, 1)
