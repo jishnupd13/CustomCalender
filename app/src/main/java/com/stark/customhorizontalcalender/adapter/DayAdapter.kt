@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.stark.customhorizontalcalender.R
@@ -23,6 +24,12 @@ class DayAdapter(
     val list:ArrayList<DayModel>,
     val currentSelectedData:(day:Date?)->Unit
 ) : Adapter<ViewHolder>() {
+
+    private lateinit var recyclerView: RecyclerView
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        this.recyclerView = recyclerView
+    }
 
     var previousSelectedPosition = -1
 
@@ -49,6 +56,7 @@ class DayAdapter(
 
 
             root.click {
+                Log.e("invoke","<<<<< ${item.isDaySelected}")
                 if(item.isDaySelected) {
                     item.isDaySelected = false
                     notifyItemChanged(position)

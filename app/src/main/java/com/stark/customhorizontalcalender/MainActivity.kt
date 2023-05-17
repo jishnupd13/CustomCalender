@@ -1,9 +1,12 @@
 package com.stark.customhorizontalcalender
 
+import android.R
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
+import android.transition.ChangeBounds
+import android.transition.TransitionManager
 import android.widget.AbsListView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,7 +19,6 @@ import com.stark.customhorizontalcalender.model.CurrentDateInstance
 import com.stark.customhorizontalcalender.model.DayModel
 import com.stark.customhorizontalcalender.model.DayViewType
 import com.stark.customhorizontalcalender.model.NumberModel
-import com.stark.customhorizontalcalender.utlis.DELAY
 import com.stark.customhorizontalcalender.utlis.DELAY_CLICK_ACTION
 import com.stark.customhorizontalcalender.utlis.click
 import kotlinx.coroutines.Dispatchers
@@ -56,10 +58,15 @@ class MainActivity : AppCompatActivity() {
         calenderViewPagerAdapter = NumberViewPagerAdapter(list, onDateChangeListener = { year, month ->
 
         }, currentSelectedData = {
-            currentSelectedDate = it
-            CurrentDateInstance.currentDateInstance = it
+            if(it != null){
+                currentSelectedDate = it
+                CurrentDateInstance.currentDateInstance = it
+                val date = convertDateToString(it)
+                Toast.makeText(this,date,Toast.LENGTH_LONG).show()
+            }
 
-            val currentPosition = realPosition % list.size
+
+           /* val currentPosition = realPosition % list.size
             if (currentPosition==0){
                 list[1].dateList.map { it.isDaySelected = false }
                 list[2].dateList.map { it.isDaySelected = false }
@@ -76,15 +83,15 @@ class MainActivity : AppCompatActivity() {
                 list[2].dateList.map { it.isDaySelected = false }
                 calenderViewPagerAdapter.notifyItemChanged(realPosition-1)
                 calenderViewPagerAdapter.notifyItemChanged(realPosition+1)
-            }
+            }*/
 
         })
 
         binding.apply {
 
             calenderRecyclerview.adapter = calenderViewPagerAdapter
-            currentItemPosition = Int.MAX_VALUE / 2 - Math.ceil(list.size.toDouble() / 2).toInt()
-            calenderRecyclerview.layoutManager?.scrollToPosition(currentItemPosition)
+            //currentItemPosition = Int.MAX_VALUE / 2 - Math.ceil(list.size.toDouble() / 2).toInt()
+            //calenderRecyclerview.layoutManager?.scrollToPosition(currentItemPosition)
 
             //For tight scrolling
             val snapHelper: SnapHelper = PagerSnapHelper()
@@ -256,6 +263,11 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    private fun transitionManagerForRecyclerview(){
+        val changeBounds = ChangeBounds()
+        changeBounds.excludeChildren(binding.calenderRecyclerview, true)
+        TransitionManager.beginDelayedTransition(binding.rootLayout, changeBounds)
+    }
 
 
     @SuppressLint("SimpleDateFormat")
@@ -364,5 +376,14 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         CurrentDateInstance.currentDateInstance = null
+    }
+
+    private fun convertDateToString(date: Date):String{
+       return try {
+            val format = SimpleDateFormat("EEEE MMM dd, yyyy")
+            format.format(date.time)
+        }catch (e:Exception){
+            ""
+        }
     }
 }
