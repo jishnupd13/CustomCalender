@@ -118,7 +118,7 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        binding.calenderRecyclerview.onScrollDoneGetPosition{ position ->
+       /* binding.calenderRecyclerview.onScrollDoneGetPosition{ position ->
 
             lifecycleScope.launch(Dispatchers.IO){
 
@@ -228,7 +228,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-        }
+        }*/
     }
 
     fun RecyclerView.onScrollDoneGetPosition(onScrollUpdate: (Int) -> Unit) {

@@ -38,3 +38,12 @@ fun ViewPager2.stateChangeListener(action: (state:Int) -> Unit){
         }
     })
 }
+
+fun View.show(){
+    this.visibility = View.VISIBLE
+}
+
+fun View.hide(){
+    this.visibility = View.GONE
+}
+

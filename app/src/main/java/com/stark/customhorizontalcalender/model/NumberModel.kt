@@ -7,5 +7,6 @@ data class NumberModel(
     var dateList:ArrayList<DayModel> = arrayListOf(),
     var year:Int,
     var month:String,
-    var monthInInteger:Int
+    var monthInInteger:Int,
+    var isExpanded:Boolean = false
 )

@@ -30,9 +30,10 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/calenderRecyclerview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:orientation="horizontal"
+        android:orientation="vertical"
+        android:layout_marginTop="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,7 +49,7 @@
         app:layout_constraintTop_toTopOf="@+id/textDayInfo"
         app:layout_constraintBottom_toBottomOf="@+id/textDayInfo"
         android:padding="14dp"
-
+        android:visibility="invisible"
         />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -60,6 +61,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:src="@drawable/ic_arrow_right"
         android:padding="14dp"
+        android:visibility="invisible"
         />
 
 
