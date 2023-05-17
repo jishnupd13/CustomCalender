@@ -13,7 +13,7 @@ import com.stark.customhorizontalcalender.utlis.show
 import java.util.Date
 
 class NumberViewPagerAdapter(
-    val list: ArrayList<NumberModel>,
+    var list: ArrayList<NumberModel>,
     val currentSelectedData:(day:Date?)->Unit,
     val onDateChangeListener:(year:String,month:String)->Unit
 ) : Adapter<NumberViewPagerAdapter.NumberViewHolder>() {
@@ -67,4 +67,12 @@ class NumberViewPagerAdapter(
     override fun onBindViewHolder(holder: NumberViewHolder, position: Int) {
        holder.onBind(list[position],position)
     }
+
+    fun setUpList(list: ArrayList<NumberModel>){
+        this.list = arrayListOf()
+        this.list = list
+        notifyDataSetChanged()
+    }
+
+
 }

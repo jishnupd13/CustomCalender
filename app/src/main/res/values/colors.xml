@@ -27,4 +27,8 @@
     <color name="colorWhiteOpacity70">#B3FFFFFF</color>
     <color name="colorUnselectedCardColor">#0D4261</color>
 
+    <color name="primary">#8D0034</color>
+    <color name="colorDarkGrey">#7c8287</color>
+
+
 </resources>
