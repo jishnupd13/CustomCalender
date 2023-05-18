@@ -299,6 +299,11 @@ class MainActivity : AppCompatActivity() {
         val year = c[Calendar.YEAR]
         val month = c[Calendar.MONTH]+1
 
+
+
+
+
+
         val pC = Calendar.getInstance()
         pC.add(Calendar.MONTH, -1)
         val pYear = pC[Calendar.YEAR]
