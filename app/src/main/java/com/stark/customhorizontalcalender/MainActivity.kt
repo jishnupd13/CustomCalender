@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var currentItemPosition = 0
     private var realPosition = 0
-    private var currentSelectedDate : Date? = Calendar.getInstance().time
+    private var currentSelectedDate : Date? = null
     private val list = arrayListOf<NumberModel>()
     private lateinit var calenderViewPagerAdapter: NumberViewPagerAdapter
     private var rightClickStatus = false
@@ -49,7 +49,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setInfiniteViewPager()
         currentSelectedDate = CurrentDateInstance.currentDateInstance
-        setMaxRange(CurrentDateInstance.currentDateInstance!!)
     }
 
 
@@ -124,6 +123,7 @@ class MainActivity : AppCompatActivity() {
                          CurrentDateInstance.rangeMaxDate = null
                          calenderViewPagerAdapter.notifyItemChanged(realPosition)
                      }else{
+                         Log.e("condition","else")
                          CurrentDateInstance.currentDateInstance = day
                          setMaxRange(day!!)
                          calenderViewPagerAdapter.notifyItemChanged(realPosition)
@@ -462,7 +462,7 @@ class MainActivity : AppCompatActivity() {
     private fun setMaxRange(date: Date){
         val calendar = Calendar.getInstance()
         calendar.time = date
-        calendar.add(Calendar.DAY_OF_YEAR, +3)
+        calendar.add(Calendar.DAY_OF_YEAR, +5)
         val newDate = calendar.time
         CurrentDateInstance.rangeMaxDate = newDate
     }
