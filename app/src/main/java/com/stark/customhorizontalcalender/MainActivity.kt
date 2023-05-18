@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setInfiniteViewPager()
         currentSelectedDate = CurrentDateInstance.currentDateInstance
+        setMaxRange(CurrentDateInstance.currentDateInstance!!)
     }
 
 
