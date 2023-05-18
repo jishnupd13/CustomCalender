@@ -52,6 +52,16 @@ class MainActivity : AppCompatActivity() {
     private var endMonth = -1
     private var endYear = -1
 
+    private val selectedDates = arrayListOf<String>(
+        "01-01-2023",
+        "02-01-2023",
+        "03-02-2023",
+        "04-02-2023",
+        "05-03-2023",
+        "06-03-2023",
+        "07-03-2023"
+    )
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -227,9 +237,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         for (i in 0 until daysInMonth) {
-              Log.e("time","${fmt.format(cal.time)}")
+             // Log.e("time","${fmt.format(cal.time)}")
           //  Log.e("dateCompare","${fmt.format(cal.time)}  ${currentSelectedDate?.compareTo(cal.time)}")
-            dayList.add(DayModel(day = cal.time, dayViewType = DayViewType.DATE, isDaySelected = compareDates(cal.time)))
+            dayList.add(DayModel(day = cal.time, dayViewType = DayViewType.DATE, isDaySelected = compareDates(cal.time), isDateEnabled =checkDateEnabled(cal.time)))
             cal.add(Calendar.DAY_OF_MONTH, 1)
         }
         return dayList
@@ -303,5 +313,19 @@ class MainActivity : AppCompatActivity() {
         val endDate = endDateInstance.time
 
         return endDate.after(startDate)
+    }
+
+    private fun checkDateEnabled(date: Date):Boolean{
+        return try {
+            val format = SimpleDateFormat("dd-MM-yyyy")
+            val currentDate =  format.format(date.time)
+            val isDateEnabledStatus = selectedDates.contains(currentDate)
+            Log.e("isDateEnabledStatus","<<< $isDateEnabledStatus")
+            isDateEnabledStatus
+        }catch (e:Exception){
+            Log.e("exception","${e.message}")
+            false
+        }
+
     }
 }

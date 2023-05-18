@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -54,24 +55,32 @@ class DayAdapter(
             else
                 root.setBackgroundResource(0)
 
+            if(item.isDateEnabled){
+                binding.textDay.setTextColor(ContextCompat.getColor(binding.textDay.context,R.color.red))
+            }else{
+                binding.textDay.setTextColor(ContextCompat.getColor(binding.textDay.context,R.color.gray))
+            }
+
 
             root.click {
-                Log.e("invoke","<<<<< ${item.isDaySelected}")
-                if(item.isDaySelected) {
-                    item.isDaySelected = false
-                    notifyItemChanged(position)
-                    previousSelectedPosition = -1
-                    currentSelectedData.invoke(null)
-                }else{
-                    if(previousSelectedPosition != -1){
-                        list[previousSelectedPosition].isDaySelected = false
-                        notifyItemChanged(previousSelectedPosition)
+                if(item.isDateEnabled){
+                    if(item.isDaySelected) {
+                        item.isDaySelected = false
+                        notifyItemChanged(position)
+                        previousSelectedPosition = -1
+                        currentSelectedData.invoke(null)
+                    }else{
+                        if(previousSelectedPosition != -1){
+                            list[previousSelectedPosition].isDaySelected = false
+                            notifyItemChanged(previousSelectedPosition)
+                        }
+                        item.isDaySelected = true
+                        notifyItemChanged(position)
+                        previousSelectedPosition = position
+                        currentSelectedData.invoke(item.day)
                     }
-                    item.isDaySelected = true
-                    notifyItemChanged(position)
-                    previousSelectedPosition = position
-                    currentSelectedData.invoke(item.day)
                 }
+
             }
         }
 
