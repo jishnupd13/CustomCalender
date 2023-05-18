@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 import com.stark.customhorizontalcalender.adapter.NumberViewPagerAdapter
 import com.stark.customhorizontalcalender.databinding.ActivityMainBinding
+import com.stark.customhorizontalcalender.model.CalenderType
 import com.stark.customhorizontalcalender.model.CurrentDateInstance
 import com.stark.customhorizontalcalender.model.DayModel
 import com.stark.customhorizontalcalender.model.DayViewType
@@ -178,8 +179,18 @@ class MainActivity : AppCompatActivity() {
             currentMonth = selectDateCalenderInstance.get(Calendar.MONTH)
             currentYear = selectDateCalenderInstance.get(Calendar.YEAR)
             Log.e("selectedYear","$currentMonth $currentYear")
-            list.add(NumberModel(id = 1,printDatesInMonth(currentYear,currentMonth), year = currentYear, month = format.format(selectDateCalenderInstance.time),currentMonth))
+            list.add(NumberModel(id = 1,printDatesInMonth(currentYear,currentMonth), year = currentYear, month = format.format(selectDateCalenderInstance.time),currentMonth, type = CalenderType.Calender))
+            if(currentMonth == 11){
+                list.add(NumberModel(id = 1,
+                    arrayListOf(), year = currentYear+1, month = format.format(selectDateCalenderInstance.time),currentMonth, type = CalenderType.Heading))
+            }
             selectDateCalenderInstance.add(Calendar.MONTH, 1)
+        }
+
+        if(list.size>0){
+            val lastIndex = list.size -1
+            if(list[lastIndex].type==CalenderType.Heading)
+                list.removeAt(lastIndex)
         }
 
         calenderViewPagerAdapter.setUpList(list)
@@ -191,12 +202,12 @@ class MainActivity : AppCompatActivity() {
         val dayList = arrayListOf<DayModel>()
 
         //Add the title
+        dayList.add(DayModel(headerTitle = "S", dayViewType = DayViewType.CALENDER_HEADER))
         dayList.add(DayModel(headerTitle = "M", dayViewType = DayViewType.CALENDER_HEADER))
         dayList.add(DayModel(headerTitle = "T", dayViewType = DayViewType.CALENDER_HEADER))
         dayList.add(DayModel(headerTitle = "W", dayViewType = DayViewType.CALENDER_HEADER))
         dayList.add(DayModel(headerTitle = "T", dayViewType = DayViewType.CALENDER_HEADER))
         dayList.add(DayModel(headerTitle = "F", dayViewType = DayViewType.CALENDER_HEADER))
-        dayList.add(DayModel(headerTitle = "S", dayViewType = DayViewType.CALENDER_HEADER))
         dayList.add(DayModel(headerTitle = "S", dayViewType = DayViewType.CALENDER_HEADER))
 
         val fmt = SimpleDateFormat("dd/MM/yyyy EEE")
@@ -227,13 +238,13 @@ class MainActivity : AppCompatActivity() {
     private fun fetchFirstDayName(date: Date):Int{
         val fmt = SimpleDateFormat("EEE")
         return when(fmt.format(date)){
-            "Mon" -> 0
-            "Tue" -> 1
-            "Wed" -> 2
-            "Thu" -> 3
-            "Fri" -> 4
-            "Sat" -> 5
-            "Sun" -> 6
+            "Mon" -> 1
+            "Tue" -> 2
+            "Wed" -> 3
+            "Thu" -> 4
+            "Fri" -> 5
+            "Sat" -> 6
+            "Sun" -> 0
             else -> 0
         }
     }
