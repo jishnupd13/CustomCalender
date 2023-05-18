@@ -86,11 +86,14 @@ class MainActivity : AppCompatActivity() {
                     startYear = it.second
                     startMonth = it.first.id
 
-                    Log.e("startYear","$startMonth $startYear")
+                    endMonth = -1
+                    endYear = -1
 
-                    if(startYear!=-1 && startMonth!= -1 && endMonth != -1 && endYear!= -1) {
+                    /*if(startYear!=-1 && startMonth!= -1 && endMonth != -1 && endYear!= -1) {
                         setInitialSetup()
-                    }
+                    }*/
+                    textEndMonth.text = ""
+                    calenderViewPagerAdapter.setUpList(arrayListOf())
 
                 }.show((binding.root.context as AppCompatActivity).supportFragmentManager,"Tag")
             }
@@ -101,10 +104,16 @@ class MainActivity : AppCompatActivity() {
                     endYear = it.second
                     endMonth = it.first.id
 
-                    binding.textEndMonth.text = "${it.first.month} ${it.second}"
 
                     if(startYear!=-1 && startMonth!= -1 && endMonth != -1 && endYear!= -1){
-                        setInitialSetup()
+                        val validationStatus = validate()
+                        Log.e("status","<<< $validationStatus")
+                        if(validationStatus){
+                            binding.textEndMonth.text = "${it.first.month} ${it.second}"
+                            setInitialSetup()
+                        }else{
+                            Toast.makeText(this@MainActivity,"Impossible",Toast.LENGTH_LONG).show()
+                        }
                     }
 
                 }.show((binding.root.context as AppCompatActivity).supportFragmentManager,"Tag")
@@ -175,10 +184,9 @@ class MainActivity : AppCompatActivity() {
         var currentMonth: Int
         var currentYear: Int
 
-        selectDateCalenderInstance.set(startYear, startMonth,1)
+        selectDateCalenderInstance.set(startYear, startMonth-1,1)
         endDateCalenderInstance.set( endYear,endMonth,1)
 
-        list = arrayListOf()
         while (!selectDateCalenderInstance.equals(endDateCalenderInstance)){
             currentMonth = selectDateCalenderInstance.get(Calendar.MONTH)
             currentYear = selectDateCalenderInstance.get(Calendar.YEAR)
@@ -283,5 +291,17 @@ class MainActivity : AppCompatActivity() {
         }catch (e:Exception){
             ""
         }
+    }
+
+    private fun validate():Boolean {
+        val startDateInstance = Calendar.getInstance()
+        startDateInstance.set(startYear, startMonth-1 , 1)
+        val startDate = startDateInstance.time
+
+        val endDateInstance = Calendar.getInstance()
+        endDateInstance.set(endYear,endMonth,1)
+        val endDate = endDateInstance.time
+
+        return endDate.after(startDate)
     }
 }
