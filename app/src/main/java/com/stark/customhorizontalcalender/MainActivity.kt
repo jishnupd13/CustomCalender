@@ -177,8 +177,6 @@ class MainActivity : AppCompatActivity() {
 
     private   fun setCalender(position: Int){
 
-       if(calenderJob?.isActive == true)
-           calenderJob?.cancel()
 
        calenderJob =  lifecycleScope.launch(Dispatchers.Main){
             currentItemPosition = position % list.size
