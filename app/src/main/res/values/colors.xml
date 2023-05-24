@@ -29,4 +29,6 @@
 
     <color name="colorCalenderUnSelected">#A5A5A5</color>
 
+    <color name="colorShade">#F5F8FA</color>
+
 </resources>

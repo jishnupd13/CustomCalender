@@ -44,18 +44,49 @@ class DayAdapter(
         fun onBind(item:DayModel,position: Int) = binding.apply {
             textDay.text = toSimpleString(item.day)
 
+            val virtualPosition = position % 7
+
             if(compareDateWithToday(item.day) || item.day.after(todayDate)){
                 textDay.setTextColor(ContextCompat.getColor(textDay.context,R.color.black))
             }else{
                 textDay.setTextColor(ContextCompat.getColor(textDay.context,R.color.colorCalenderUnSelected))
+                textDay.setBackgroundResource(0)
             }
 
 
-            if(item.isDaySelected)
+         /*   if(item.isDaySelected)
                 root.setBackgroundResource(R.drawable.bg_gray_circle)
             else
-                root.setBackgroundResource(0)
+                root.setBackgroundResource(0)*/
 
+            if(item.isDaySelected){
+                if (compareDates(item.day)){
+                    textDay.setBackgroundResource(R.drawable.bg_gray_circle)
+                    if(CurrentDateInstance.currentDateInstance!=null && CurrentDateInstance.rangeMaxDate!=null){
+                        root.setBackgroundResource(R.drawable.bg_gray_primary_component)
+                    }
+                }else if(compareRangeDates(item.day)){
+                    textDay.setBackgroundResource(R.drawable.bg_gray_circle)
+                    if(CurrentDateInstance.currentDateInstance!=null && CurrentDateInstance.rangeMaxDate!=null){
+                        root.setBackgroundResource(R.drawable.bg_gray_last_component)
+                    }
+                }
+                else if(virtualPosition == 0){
+                    if(CurrentDateInstance.currentDateInstance!=null && CurrentDateInstance.rangeMaxDate!=null){
+                        root.setBackgroundResource(R.drawable.bg_gray_primary_component)
+                    }
+                }else if(virtualPosition == 6){
+                    if(CurrentDateInstance.currentDateInstance!=null && CurrentDateInstance.rangeMaxDate!=null){
+                        root.setBackgroundResource(R.drawable.bg_gray_last_component)
+                    }
+                } else{
+                    if(CurrentDateInstance.currentDateInstance!=null && CurrentDateInstance.rangeMaxDate!=null){
+                        root.setBackgroundResource(R.drawable.bg_gray_middle_component)
+                    }
+                }
+            }else{
+                textDay.setBackgroundResource(0)
+            }
 
             root.click {
                 if(item.isDaySelected) {
@@ -113,6 +144,8 @@ class DayAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
+
         when(getItemViewType(position)){
            1-> (holder as DayTitleViewHolder).onBind(list[position])
            2 -> (holder as DayBufferViewHolder).onBind(list[position])
