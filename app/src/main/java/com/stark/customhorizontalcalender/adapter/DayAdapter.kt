@@ -56,7 +56,7 @@ class DayAdapter(
                 root.setBackgroundResource(0)
 
             if(item.isDateEnabled){
-                binding.textDay.setTextColor(ContextCompat.getColor(binding.textDay.context,R.color.red))
+                binding.textDay.setTextColor(ContextCompat.getColor(binding.textDay.context,R.color.black))
             }else{
                 binding.textDay.setTextColor(ContextCompat.getColor(binding.textDay.context,R.color.gray))
             }

@@ -68,8 +68,8 @@ class MainActivity : AppCompatActivity() {
             if(it != null){
                 currentSelectedDate = it
                 CurrentDateInstance.currentDateInstance = it
-                val date = convertDateToString(it)
-                Toast.makeText(this,date,Toast.LENGTH_LONG).show()
+               // val date = convertDateToString(it)
+                //Toast.makeText(this,date,Toast.LENGTH_LONG).show()
             }
         })
 
@@ -214,7 +214,7 @@ class MainActivity : AppCompatActivity() {
         for (i in 0 until daysInMonth) {
              // Log.e("time","${fmt.format(cal.time)}")
           //  Log.e("dateCompare","${fmt.format(cal.time)}  ${currentSelectedDate?.compareTo(cal.time)}")
-            dayList.add(DayModel(day = cal.time, dayViewType = DayViewType.DATE, isDaySelected = compareDates(cal.time), isDateEnabled =checkDateEnabled(cal.time)))
+            dayList.add(DayModel(day = cal.time, dayViewType = DayViewType.DATE, isDaySelected = compareDates(cal.time)))
             cal.add(Calendar.DAY_OF_MONTH, 1)
         }
         return dayList
