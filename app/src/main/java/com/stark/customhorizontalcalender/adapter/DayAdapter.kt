@@ -15,11 +15,9 @@ import com.stark.customhorizontalcalender.model.CurrentDateInstance
 import com.stark.customhorizontalcalender.model.DayModel
 import com.stark.customhorizontalcalender.model.DayViewType
 import com.stark.customhorizontalcalender.utlis.click
-import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
-import kotlin.IllegalArgumentException
 
 class DayAdapter(
     val list:ArrayList<DayModel>,
@@ -41,9 +39,15 @@ class DayAdapter(
 
     inner class DayViewHolder(private val binding: CellDaysBinding):ViewHolder(binding.root){
 
-        fun onBind(item:DayModel,position: Int) = binding.apply {
-            textDay.text = toSimpleString(item.day)
+        @SuppressLint("SimpleDateFormat")
+        fun onBind(item:DayModel, position: Int) = binding.apply {
 
+            val sdf = SimpleDateFormat("dd")
+            val day = sdf.format(item.day).toInt()
+
+
+
+            textDay.text = toSimpleString(item.day)
             val virtualPosition = position % 7
 
             if(compareDateWithToday(item.day) || item.day.after(todayDate)){
@@ -71,11 +75,11 @@ class DayAdapter(
                         root.setBackgroundResource(R.drawable.bg_gray_last_component)
                     }
                 }
-                else if(virtualPosition == 0){
+                else if(virtualPosition == 0 || day == 1){
                     if(CurrentDateInstance.currentDateInstance!=null && CurrentDateInstance.rangeMaxDate!=null){
                         root.setBackgroundResource(R.drawable.bg_gray_primary_component)
                     }
-                }else if(virtualPosition == 6){
+                }else if(virtualPosition == 6 || position == list.size-1){
                     if(CurrentDateInstance.currentDateInstance!=null && CurrentDateInstance.rangeMaxDate!=null){
                         root.setBackgroundResource(R.drawable.bg_gray_last_component)
                     }

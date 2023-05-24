@@ -58,6 +58,8 @@ class MainActivity : AppCompatActivity() {
         calenderViewPagerAdapter = NumberViewPagerAdapter(list, onDateChangeListener = { year, month ->
         },currentSelectedData = {day, selectionStatus ->
 
+          //  Log.e("selectionStatus","<<<< $selectionStatus ${CurrentDateInstance.currentDateInstance} ${CurrentDateInstance.rangeMaxDate}")
+
             if(selectionStatus){
                 if(CurrentDateInstance.currentDateInstance != null && CurrentDateInstance.rangeMaxDate != null){
                     CurrentDateInstance.currentDateInstance = day
@@ -108,6 +110,7 @@ class MainActivity : AppCompatActivity() {
 
             currentItemPosition = Int.MAX_VALUE / 2 - Math.ceil(list.size.toDouble() / 2).toInt()
             calenderRecyclerview.layoutManager?.scrollToPosition(currentItemPosition)
+            realPosition = currentItemPosition
 
 
 
@@ -171,7 +174,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private   fun setCalender(position: Int){
+    private fun setCalender(position: Int){
 
        if(calenderJob?.isActive == true)
            calenderJob?.cancel()
