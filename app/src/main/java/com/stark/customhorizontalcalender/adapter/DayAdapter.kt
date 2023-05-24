@@ -90,13 +90,13 @@ class DayAdapter(
         }
     }
 
-    inner class DayTitleViewHolder(val binding: CellDayTitleBinding):ViewHolder(binding.root){
+    inner class DayTitleViewHolder(private val binding: CellDayTitleBinding):ViewHolder(binding.root){
         fun onBind(item:DayModel) = binding.apply {
             textDay.text = item.headerTitle
         }
     }
 
-    inner class DayBufferViewHolder(val binding: CellBufferBinding):ViewHolder(binding.root){
+    inner class DayBufferViewHolder(private val binding: CellBufferBinding):ViewHolder(binding.root){
         fun onBind(item:DayModel) = binding.apply {
             Log.e("status","${item.dayViewType}")
         }

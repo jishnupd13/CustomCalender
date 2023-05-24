@@ -1,19 +1,12 @@
 package com.stark.customhorizontalcalender
 
-import android.R
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
 import android.util.Log
-import android.widget.AbsListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.PagerSnapHelper
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.SnapHelper
 import com.stark.customhorizontalcalender.adapter.NumberViewPagerAdapter
 import com.stark.customhorizontalcalender.databinding.ActivityMainBinding
 import com.stark.customhorizontalcalender.model.CalenderType
@@ -21,13 +14,7 @@ import com.stark.customhorizontalcalender.model.CurrentDateInstance
 import com.stark.customhorizontalcalender.model.DayModel
 import com.stark.customhorizontalcalender.model.DayViewType
 import com.stark.customhorizontalcalender.model.NumberModel
-import com.stark.customhorizontalcalender.utlis.DELAY_CLICK_ACTION
-import com.stark.customhorizontalcalender.utlis.click
-import com.stark.customhorizontalcalender.utlis.show
 import com.stark.customhorizontalcalender.yearandmonthpicker.MonthAndYearPickerDialogFragment
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -53,7 +40,7 @@ class MainActivity : AppCompatActivity() {
     private var endMonth = -1
     private var endYear = -1
 
-    private val selectedDates = arrayListOf<String>(
+    private val selectedDates = arrayListOf(
         "01-01-2023",
         "02-01-2023",
         "03-02-2023",
@@ -303,6 +290,7 @@ class MainActivity : AppCompatActivity() {
         return endDate.after(startDate)
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun checkDateEnabled(date: Date):Boolean{
         return try {
             val format = SimpleDateFormat("dd-MM-yyyy")

@@ -1,7 +1,6 @@
 package com.stark.customhorizontalcalender.adapter
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.Adapter
@@ -22,13 +21,13 @@ class NumberViewPagerAdapter(
 
     private var previousExpandPosition = -1
 
-    inner class YearHeadingViewHolder(val binding:CellIncomingYearBinding):ViewHolder(binding.root){
+    inner class YearHeadingViewHolder(private val binding:CellIncomingYearBinding):ViewHolder(binding.root){
         fun onBind(item: NumberModel){
             binding.textYear.text = item.year.toString()
         }
     }
 
-   inner class NumberViewHolder(val binding: CellViewPagerBinding):ViewHolder(binding.root){
+   inner class NumberViewHolder(private val binding: CellViewPagerBinding):ViewHolder(binding.root){
         @SuppressLint("SetTextI18n")
         fun  onBind(item:NumberModel,position: Int) = binding.apply {
             val dayAdapter = DayAdapter(item.dateList, currentSelectedData = currentSelectedData)
@@ -97,6 +96,7 @@ class NumberViewPagerAdapter(
        holder.onBind(list[position],position)
     }*/
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setUpList(list: ArrayList<NumberModel>){
         this.list = arrayListOf()
         this.list = list
