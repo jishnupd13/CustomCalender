@@ -15,7 +15,7 @@ import java.util.Date
 
 class NumberViewPagerAdapter(
     var list: ArrayList<NumberModel>,
-    val currentSelectedData:(day:Date?)->Unit,
+    val currentSelectedData:(day:Date?,selectionStatus:Boolean)->Unit,
     val onDateChangeListener:(year:String,month:String)->Unit
 ) : Adapter<ViewHolder>() {
 

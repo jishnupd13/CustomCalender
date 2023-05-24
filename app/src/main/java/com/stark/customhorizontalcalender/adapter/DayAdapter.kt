@@ -18,70 +18,95 @@ import com.stark.customhorizontalcalender.model.DayViewType
 import com.stark.customhorizontalcalender.utlis.click
 import java.lang.Exception
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import kotlin.IllegalArgumentException
 
 class DayAdapter(
     val list:ArrayList<DayModel>,
-    val currentSelectedData:(day:Date?)->Unit
+    val currentSelectedData:(day:Date?,selectionStatus:Boolean)->Unit
 ) : Adapter<ViewHolder>() {
 
     private lateinit var recyclerView: RecyclerView
+    private val todayDate = Calendar.getInstance().time
+
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         this.recyclerView = recyclerView
     }
 
-    var previousSelectedPosition = -1
 
     init {
-        list.map {
-            if (compareDates(it.day)){
-                previousSelectedPosition = list.indexOf(it)
-                it.isDaySelected = true
+            list.map {
+                if (compareDates(it.day)){
+                    it.isDaySelected = true
+                } else if(compareRangeDates(it.day)){
+                    it.isDaySelected = true
+                }else
+                    it.isDaySelected = compareWithInRange(it.day)
             }
-            else
-                it.isDaySelected = false
-        }
     }
 
     inner class DayViewHolder(private val binding: CellDaysBinding):ViewHolder(binding.root){
 
         fun onBind(item:DayModel,position: Int) = binding.apply {
+            val sdf = SimpleDateFormat("dd")
+            val day = sdf.format(item.day).toInt()
+
             textDay.text = toSimpleString(item.day)
+            val virtualPosition = position % 7
 
-            if(item.isDaySelected)
-                root.setBackgroundResource(R.drawable.bg_gray_circle)
-            else
-                root.setBackgroundResource(0)
+            textDay.setTextColor(ContextCompat.getColor(textDay.context,R.color.black))
 
-            if(item.isDateEnabled){
-                binding.textDay.setTextColor(ContextCompat.getColor(binding.textDay.context,R.color.black))
+            /*if(compareDateWithToday(item.day) || item.day.after(todayDate)){
+                textDay.setTextColor(ContextCompat.getColor(textDay.context,R.color.black))
             }else{
-                binding.textDay.setTextColor(ContextCompat.getColor(binding.textDay.context,R.color.gray))
-            }
+                textDay.setTextColor(ContextCompat.getColor(textDay.context,R.color.colorLightGray))
+                textDay.setBackgroundResource(0)
+            }*/
 
 
-            root.click {
-                if(item.isDateEnabled){
-                    if(item.isDaySelected) {
-                        item.isDaySelected = false
-                        notifyItemChanged(position)
-                        previousSelectedPosition = -1
-                        currentSelectedData.invoke(null)
-                    }else{
-                        if(previousSelectedPosition != -1){
-                            list[previousSelectedPosition].isDaySelected = false
-                            notifyItemChanged(previousSelectedPosition)
-                        }
-                        item.isDaySelected = true
-                        notifyItemChanged(position)
-                        previousSelectedPosition = position
-                        currentSelectedData.invoke(item.day)
+            if(item.isDaySelected){
+                if (compareDates(item.day)){
+                    textDay.setBackgroundResource(R.drawable.bg_gray_circle)
+                    if(CurrentDateInstance.currentDateInstance!=null && CurrentDateInstance.rangeMaxDate!=null){
+                        root.setBackgroundResource(R.drawable.bg_gray_primary_component)
+                    }
+                }else if(compareRangeDates(item.day)){
+                    textDay.setBackgroundResource(R.drawable.bg_gray_circle)
+                    if(CurrentDateInstance.currentDateInstance!=null && CurrentDateInstance.rangeMaxDate!=null){
+                        root.setBackgroundResource(R.drawable.bg_gray_last_component)
                     }
                 }
-
+                else if(virtualPosition == 0 || day == 1){
+                    if(CurrentDateInstance.currentDateInstance!=null && CurrentDateInstance.rangeMaxDate!=null){
+                        root.setBackgroundResource(R.drawable.bg_gray_primary_component)
+                    }
+                }else if(virtualPosition == 6 || position == list.size-1){
+                    if(CurrentDateInstance.currentDateInstance!=null && CurrentDateInstance.rangeMaxDate!=null){
+                        root.setBackgroundResource(R.drawable.bg_gray_last_component)
+                    }
+                } else{
+                    if(CurrentDateInstance.currentDateInstance!=null && CurrentDateInstance.rangeMaxDate!=null){
+                        root.setBackgroundResource(R.drawable.bg_gray_middle_component)
+                    }
+                }
+            }else{
+                textDay.setBackgroundResource(0)
             }
+
+            root.click {
+                if(item.isDaySelected) {
+                    item.isDaySelected = false
+                    notifyItemChanged(position)
+                    currentSelectedData.invoke(item.day,false)
+                }else{
+                    item.isDaySelected = true
+                    notifyItemChanged(position)
+                    currentSelectedData.invoke(item.day,true)
+                }
+            }
+
         }
 
        @SuppressLint("SimpleDateFormat")
@@ -150,5 +175,41 @@ class DayAdapter(
         }catch (e: Exception){
             false
         }
+    }
+
+    private fun checkAndCompareDates(date1: Date,date2: Date):Int{
+        return if(date1 == date2)
+            0
+        else if(date1.after(date2))
+            -1
+        else
+            1
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private fun compareRangeDates(date: Date):Boolean{
+        return try {
+            val fmt = SimpleDateFormat("yyyyMMdd")
+            fmt.format(date) == CurrentDateInstance.rangeMaxDate?.let { fmt.format(it) }
+        }catch (e: Exception){
+            false
+        }
+    }
+
+
+    @SuppressLint("SimpleDateFormat")
+    private fun compareDateWithToday(date: Date):Boolean{
+        return try {
+            val fmt = SimpleDateFormat("yyyyMMdd")
+            fmt.format(date) == todayDate?.let { fmt.format(it) }
+        }catch (e: Exception){
+            false
+        }
+    }
+
+    private fun compareWithInRange(date: Date):Boolean{
+        return if(CurrentDateInstance.currentDateInstance!=null && CurrentDateInstance.rangeMaxDate != null){
+            date.after(CurrentDateInstance.currentDateInstance) && date.before(CurrentDateInstance.rangeMaxDate)
+        }else false
     }
 }

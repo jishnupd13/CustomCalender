@@ -64,13 +64,46 @@ class MainActivity : AppCompatActivity() {
 
         calenderViewPagerAdapter = NumberViewPagerAdapter(list, onDateChangeListener = { year, month ->
 
-        }, currentSelectedData = {
-            if(it != null){
-                currentSelectedDate = it
-                CurrentDateInstance.currentDateInstance = it
-               // val date = convertDateToString(it)
-                //Toast.makeText(this,date,Toast.LENGTH_LONG).show()
+        }, currentSelectedData = {day, selectionStatus ->
+
+            if(selectionStatus){
+                if(CurrentDateInstance.currentDateInstance != null && CurrentDateInstance.rangeMaxDate != null){
+                    CurrentDateInstance.currentDateInstance = day
+                    CurrentDateInstance.rangeMaxDate = null
+                    calenderViewPagerAdapter.notifyItemChanged(realPosition)
+                }else if(CurrentDateInstance.currentDateInstance ==null && CurrentDateInstance.rangeMaxDate == null){
+                    CurrentDateInstance.currentDateInstance = day
+                    CurrentDateInstance.rangeMaxDate = null
+                    calenderViewPagerAdapter.notifyItemChanged(realPosition)
+                }else if(CurrentDateInstance.currentDateInstance != null && CurrentDateInstance.rangeMaxDate==null){
+                    val compareStatus = checkAndCompareDates(date1 = CurrentDateInstance.currentDateInstance!!, date2 = day!!)
+                    if (compareStatus == -1){
+                        val tmp = CurrentDateInstance.currentDateInstance
+                        CurrentDateInstance.currentDateInstance = day
+                        CurrentDateInstance.rangeMaxDate = tmp
+                    }else{
+                        CurrentDateInstance.rangeMaxDate = day
+                    }
+                    calenderViewPagerAdapter.notifyItemChanged(realPosition)
+                }
+            }else{
+                /**
+                 * User unselect the date
+                 * */
+                if(CurrentDateInstance.currentDateInstance != null && CurrentDateInstance.rangeMaxDate != null){
+                    CurrentDateInstance.currentDateInstance = day
+                    CurrentDateInstance.rangeMaxDate = null
+                    calenderViewPagerAdapter.notifyItemChanged(realPosition)
+                }else if(CurrentDateInstance.currentDateInstance!=null && CurrentDateInstance.rangeMaxDate==null){
+                    CurrentDateInstance.currentDateInstance = null
+                    CurrentDateInstance.rangeMaxDate = null
+                    calenderViewPagerAdapter.notifyItemChanged(realPosition)
+                }
             }
+
+            calenderViewPagerAdapter.notifyItemChanged(realPosition+1)
+            calenderViewPagerAdapter.notifyItemChanged(realPosition-1)
+
         })
 
         binding.calenderRecyclerview.adapter = calenderViewPagerAdapter
@@ -300,6 +333,14 @@ class MainActivity : AppCompatActivity() {
             Log.e("exception","${e.message}")
             false
         }
+    }
 
+    private fun checkAndCompareDates(date1: Date,date2: Date):Int{
+        return if(date1 == date2)
+            0
+        else if(date1.after(date2))
+            -1
+        else
+            1
     }
 }
