@@ -58,22 +58,20 @@ class DayAdapter(
 
             textDay.setTextColor(ContextCompat.getColor(textDay.context,R.color.black))
 
-            /*if(compareDateWithToday(item.day) || item.day.after(todayDate)){
-                textDay.setTextColor(ContextCompat.getColor(textDay.context,R.color.black))
-            }else{
-                textDay.setTextColor(ContextCompat.getColor(textDay.context,R.color.colorLightGray))
-                textDay.setBackgroundResource(0)
-            }*/
 
 
             if(item.isDaySelected){
                 if (compareDates(item.day)){
                     textDay.setBackgroundResource(R.drawable.bg_gray_circle)
+                    textDay.setTextColor(ContextCompat.getColor(textDay.context,R.color.white))
+
                     if(CurrentDateInstance.currentDateInstance!=null && CurrentDateInstance.rangeMaxDate!=null){
                         root.setBackgroundResource(R.drawable.bg_gray_primary_component)
                     }
                 }else if(compareRangeDates(item.day)){
                     textDay.setBackgroundResource(R.drawable.bg_gray_circle)
+                    textDay.setTextColor(ContextCompat.getColor(textDay.context,R.color.white))
+
                     if(CurrentDateInstance.currentDateInstance!=null && CurrentDateInstance.rangeMaxDate!=null){
                         root.setBackgroundResource(R.drawable.bg_gray_last_component)
                     }
@@ -93,6 +91,7 @@ class DayAdapter(
                 }
             }else{
                 textDay.setBackgroundResource(0)
+                textDay.setTextColor(ContextCompat.getColor(textDay.context,R.color.black))
             }
 
             root.click {
@@ -211,5 +210,13 @@ class DayAdapter(
         return if(CurrentDateInstance.currentDateInstance!=null && CurrentDateInstance.rangeMaxDate != null){
             date.after(CurrentDateInstance.currentDateInstance) && date.before(CurrentDateInstance.rangeMaxDate)
         }else false
+    }
+
+    private fun setMaxRange(date: Date){
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        calendar.add(Calendar.DAY_OF_YEAR, +5)
+        val newDate = calendar.time
+        CurrentDateInstance.rangeMaxDate = newDate
     }
 }
