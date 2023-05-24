@@ -37,7 +37,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var calenderViewPagerAdapter: NumberViewPagerAdapter
     private var rightClickStatus = false
     private var leftClickStatus = false
-
     private var calenderJob:Job? =null
 
 
@@ -61,7 +60,7 @@ class MainActivity : AppCompatActivity() {
           //  Log.e("selectionStatus","<<<< $selectionStatus ${CurrentDateInstance.currentDateInstance} ${CurrentDateInstance.rangeMaxDate}")
 
             if(selectionStatus){
-                if(CurrentDateInstance.currentDateInstance != null && CurrentDateInstance.rangeMaxDate != null){
+               /* if(CurrentDateInstance.currentDateInstance != null && CurrentDateInstance.rangeMaxDate != null){
                     CurrentDateInstance.currentDateInstance = day
                     CurrentDateInstance.rangeMaxDate = null
                     calenderViewPagerAdapter.notifyItemChanged(realPosition)
@@ -79,12 +78,33 @@ class MainActivity : AppCompatActivity() {
                         CurrentDateInstance.rangeMaxDate = day
                     }
                     calenderViewPagerAdapter.notifyItemChanged(realPosition)
+                }*/
+
+                if(CurrentDateInstance.currentDateInstance ==null && CurrentDateInstance.rangeMaxDate==null){
+                    CurrentDateInstance.currentDateInstance = day
+                    setMaxRange(day!!)
+                    calenderViewPagerAdapter.notifyItemChanged(realPosition)
+                }else if(CurrentDateInstance.currentDateInstance != null && CurrentDateInstance.rangeMaxDate!=null){
+                    if(CurrentDateInstance.currentDateInstance?.equals(day) == true){
+                        CurrentDateInstance.currentDateInstance = null
+                        CurrentDateInstance.rangeMaxDate = null
+                        calenderViewPagerAdapter.notifyItemChanged(realPosition)
+                    }else{
+                        CurrentDateInstance.currentDateInstance = day
+                        setMaxRange(day!!)
+                        calenderViewPagerAdapter.notifyItemChanged(realPosition)
+                    }
+                }else if(CurrentDateInstance.currentDateInstance!= null && CurrentDateInstance.rangeMaxDate==null){
+                    CurrentDateInstance.currentDateInstance = day
+                    setMaxRange(day!!)
+                    calenderViewPagerAdapter.notifyItemChanged(realPosition)
                 }
+
             }else{
                 /**
                  * User unselect the date
                  * */
-                if(CurrentDateInstance.currentDateInstance != null && CurrentDateInstance.rangeMaxDate != null){
+                /*if(CurrentDateInstance.currentDateInstance != null && CurrentDateInstance.rangeMaxDate != null){
                     CurrentDateInstance.currentDateInstance = day
                     CurrentDateInstance.rangeMaxDate = null
                     calenderViewPagerAdapter.notifyItemChanged(realPosition)
@@ -92,6 +112,19 @@ class MainActivity : AppCompatActivity() {
                     CurrentDateInstance.currentDateInstance = null
                     CurrentDateInstance.rangeMaxDate = null
                     calenderViewPagerAdapter.notifyItemChanged(realPosition)
+                }*/
+
+                if(CurrentDateInstance.currentDateInstance != null && CurrentDateInstance.rangeMaxDate!=null){
+                    if(CurrentDateInstance.currentDateInstance?.equals(day) == true){
+                        CurrentDateInstance.currentDateInstance = null
+                        CurrentDateInstance.rangeMaxDate = null
+                        calenderViewPagerAdapter.notifyItemChanged(realPosition)
+                    }else{
+                        Log.e("condition","else")
+                        CurrentDateInstance.currentDateInstance = day
+                        setMaxRange(day!!)
+                        calenderViewPagerAdapter.notifyItemChanged(realPosition)
+                    }
                 }
             }
 
@@ -407,6 +440,14 @@ class MainActivity : AppCompatActivity() {
             -1
         else
             1
+    }
+
+    private fun setMaxRange(date: Date){
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        calendar.add(Calendar.DAY_OF_YEAR, +13)
+        val newDate = calendar.time
+        CurrentDateInstance.rangeMaxDate = newDate
     }
 
 
